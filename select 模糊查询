@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>项目一览</title>
+	#parse("content/importBase.vm")
+	<script type="text/javascript">
+		var temAttr = [];
+		$(function(){
+			$("#sel option").each(function(){
+				var temOb = {};
+				var optText = $(this).text();
+				var optVal = $(this).val();
+				temOb.CODE = optVal;
+				temOb.FLAG = optText;
+				temAttr.push(temOb);
+			});
+			
+			$(document).bind('click', function(e) {  
+		        var e = e || window.event; //浏览器兼容性   
+		        var elem = e.target || e.srcElement;  
+		        while (elem) { //循环判断至跟节点，防止点击的是div子元素   
+		            if (elem.id && (elem.id == 'sel' || elem.id == "inp")) {  
+		                return;  
+		            }  
+		            elem = elem.parentNode;  
+		        }  
+		        $('#sel').css('display', 'none'); //点击的不是div或其子元素   
+		    });  
+		});
+		function inpSel(this_){
+			$("#sel").html("");
+			$("#sel").css({"display":""});
+			var sel = $("#sel");
+			for(var i=0;i<temAttr.length;i++){
+				var temOb = temAttr[i];
+				sel.append("<option value='"+temOb.CODE+"'>"+temOb.FLAG+"</option>");
+			}
+		}
+		function inpInfo(this_){
+			var sel = $("#sel");
+			sel.html("");
+			for(var i=0;i<temAttr.length;i++){
+				var temOb = temAttr[i];
+				if(temOb.FLAG.indexOf(this_.value)>=0){
+					sel.append("<option value='"+temOb.CODE+"'>"+temOb.FLAG+"</option>");
+				}
+			}
+		}
+		function selChange(this_){
+			var optText = $(this_).find("option:selected").text();
+			$("#inp").val(optText);
+			$("#sel").css({"display":"none"});
+		}
+	</script>
+</head>
+<body>
+	<div class="second">
+		<span>测试：</span><br/>
+		<input type="text" id="inp"  name="inp" onfocus="inpSel(this)" oninput="inpInfo(this)" style="border: 1px solid #999;width:150px;" placeholder="--请选择--"></input>
+		<br/>
+		<select name="sel" id="sel" size="2" onchange="selChange(this)" style="display:none;border: 1px solid #999;height:120px;multiple:true;">
+			#foreach($!tem in $!selopts)
+				<option value="$!tem.CODE">$!tem.FLAG</option>
+			#end
+		</select>
+	</div>
+</body>
+</html>
